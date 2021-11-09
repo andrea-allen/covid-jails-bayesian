@@ -34,4 +34,13 @@ model {
 }
 
 generated quantities {
+  real<lower=0> inf_hat[max_t];
+  int<lower=0> y_hat[max_t];
+  {
+    vector[2] init;
+    init[1] = sus_init;
+    init[2] = inf_init;
+    inf_hat = ode_rk45(sir_free, init, 0, ts, beta, alpha)[:,2];
+  }
+  y ~ poisson(inf_curve);
 }
