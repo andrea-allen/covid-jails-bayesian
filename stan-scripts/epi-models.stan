@@ -17,6 +17,23 @@ functions {
     return dydt;
   }
   
+    /**
+  * @function sir_free ODEs for the classic SIR model with unknown population size
+  *
+  * @param t Rndependent variable time
+  * @param y Vector for S and I states
+  * @param beta Infection rate
+  * @param alpha Recovery rate
+  *
+  * @return Vector of system derivatives
+  */
+  vector sir_free(real t, vector y, real beta, real alpha) {
+    vector[2] dydt;
+    dydt[1] = -beta * y[1] * y[2];
+    dydt[2] = beta * y[1] * y[2] - alpha * y[2];
+    return dydt;
+  }
+  
   /**
   * @function seir ODEs for the classic SEIR model with normalized compartments
   *
