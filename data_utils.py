@@ -83,8 +83,8 @@ def select_county(data, county_name, state_name):
     :param county_name: str
     :return: Pandas dataframe
     """
-    state_df = data[data['state'] == state_name]
-    county_df = state_df[state_df['county'] == county_name]
+    state_df = data[data['State'] == state_name]
+    county_df = state_df[state_df['County'] == county_name]
     return county_df
 
 def select_date_range_UCLA(data, start_date, end_date):
