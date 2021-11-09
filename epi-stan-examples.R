@@ -2,8 +2,6 @@ require(cmdstanr)
 require(tidyverse)
 require(posterior)
 
-rstan_options(auto_write = TRUE)
-
 # info for stan 'data' block
 stan_dat <- list(
   max_t = 50,
@@ -11,7 +9,7 @@ stan_dat <- list(
   beta = .1,
   alpha = .1,
   c = 5,
-  shift_prop = 0.3,
+  psi = 0.3,
   init_cond = c(.1, .2, .05, .2, .05, 0)
 )
 
