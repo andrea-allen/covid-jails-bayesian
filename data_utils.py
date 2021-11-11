@@ -84,6 +84,8 @@ def select_county(data, county_name, state_name):
     :return: Pandas dataframe
     """
     state_df = data[data['State'] == state_name]
+    if county_name is None:
+        return state_df
     county_df = state_df[state_df['County'] == county_name]
     return county_df
 
@@ -133,6 +135,16 @@ def select_date_range_JHU(data, start_date, end_date):
     """
     ## TODO get specific parsing for JH data
     return data
+
+def select_state_JHU(data, state):
+    return data[data['Province_State'] == state]
+
+def select_county_JHU(data, county):
+    return data[data['Admin2'].str.lower() == county]
+
+def get_county_pop(county_name):
+    county_pop2019 = pd.read_csv('ca_county_pop.csv')
+    return county_pop2019[county_pop2019['County'].str.lower() == county_name].iloc[0]['pop2019']
 
 
 def moving_average(a, n=7):
