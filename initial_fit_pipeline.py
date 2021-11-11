@@ -37,6 +37,9 @@ for facility in set(la_county['Name'].values):
         jhu_county['Date'] = pd.to_datetime(jhu_county.index)
 
         combined_df = la_cases.join(jhu_county.set_index('Date'), on='Date')
+        combined_df = combined_df.rename(columns={int(combined_df.columns[6]): "County.cumul"})
+        combined_df['County.Pop'] = [county_pop for i in range(len(combined_df))]
+        combined_df['County'] = [county_name_lower for i in range(len(combined_df))]
         combined_df.to_csv(f'./joined_datasets_california/{county_name_lower.replace(" ", "-")}_{fac_ID}.csv')
 
         fig, axs = plt.subplots(2, 1)
