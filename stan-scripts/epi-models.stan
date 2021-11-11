@@ -29,8 +29,8 @@ functions {
   */
   vector sir_free(real t, vector y, real beta, real alpha) {
     vector[2] dydt;
-    dydt[1] = -beta * y[1] * y[2];
-    dydt[2] = beta * y[1] * y[2] - alpha * y[2];
+    dydt[1] = -beta * y[1] * y[2]; //susceptible update
+    dydt[2] = beta * y[1] * y[2] - alpha * y[2]; //infectious update
     return dydt;
   }
   
