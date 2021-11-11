@@ -37,7 +37,7 @@ for facility in set(la_county['Name'].values):
         jhu_county['Date'] = pd.to_datetime(jhu_county.index)
 
         combined_df = la_cases.join(jhu_county.set_index('Date'), on='Date')
-        combined_df.to_csv(f'./joined_datasets_california/{county_name_lower}_{fac_ID}')
+        combined_df.to_csv(f'./joined_datasets_california/{county_name_lower.replace(" ", "-")}_{fac_ID}.csv')
 
         fig, axs = plt.subplots(2, 1)
         axs[0].scatter(combined_df['Date'], combined_df['Residents.Active']/combined_df['Residents.Population'], label=facility, s=2)
@@ -47,7 +47,7 @@ for facility in set(la_county['Name'].values):
         axs[1].set_ylim([-.01, .09])
         plt.legend()
         plt.ylabel('Percent of population')
-        plt.savefig(f'./jointplots/{facility}_may20_may21_jhu.png')
+        plt.savefig(f'./jointplots/{facility.replace(" ", "-")}_may20_may21_jhu.png')
         plt.show()
     except:
         continue
