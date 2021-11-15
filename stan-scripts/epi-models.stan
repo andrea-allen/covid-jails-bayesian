@@ -17,7 +17,26 @@ functions {
     return dydt;
   }
   
-    /**
+  /**
+  * @function sir_free_pop ODEs for the classic SIR model with changing population size
+  *
+  * @param t Rndependent variable time
+  * @param y Vector for I and R states, and population size
+  * @param beta Infection rate
+  * @param alpha Recovery rate
+  * @param arrest_rate Rate of change in prison population
+  *
+  * @return Vector of system derivatives
+  */
+  vector sir_free_pop(real t, vector y, real beta, real alpha, real arrest_rate) {
+    vector[3] dydt;
+    dydt[1] = (beta / y[3]) * y[1] * (y[3] - y[1] - y[2]) - alpha * y[1]; // infected update
+    dydt[2] = alpha * y[1]; // recovered update
+    dydt[3] = arrest_rate; // population update
+    return dydt;
+  }
+  
+  /**
   * @function sir_free ODEs for the classic SIR model with unknown population size
   *
   * @param t Rndependent variable time
