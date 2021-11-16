@@ -6,7 +6,7 @@
 ### PLOT_TS: display a plot of the predictive distribution?---------------------
 ### SIMULATE: simulate fake data (prior predictive check)?----------------------
 
-FNAME = 'imperial_102.0'
+FNAME = 'kern_141.0'
 SAVE_CSV = TRUE
 PLOT_TS = TRUE
 SIMULATE = FALSE
