@@ -11,10 +11,20 @@ SAVE_CSV = TRUE
 PLOT_TS = TRUE
 SIMULATE = FALSE
 
+#install.packages("jsonlite", repos=c("http://ftp.ussg.iu.edu/CRAN/"))
+#install.packages("tidyverse", repos=c("http://ftp.ussg.iu.edu/CRAN/"))
+#install.packages("processx", repos=c("http://ftp.ussg.iu.edu/CRAN/"))
+#install.packages("data.table", repos=c("http://ftp.ussg.iu.edu/CRAN/"))
+##install.packages("posterior", repos=c("http://ftp.ussg.iu.edu/CRAN/"))
+##install.packages(c("Rcpp", "readr"), repos=c("http://ftp.ussg.iu.edu/CRAN/"))
+#install.packages("cmdstanr", repos = c("https://mc-stan.org/r-packages/")) #, getOption("repos"))
+
 ### Load required packages------------------------------------------------------
 library(cmdstanr)
 library(tidyverse)
 library(posterior)
+library(tidyverse)
+#install_cmdstan()
 
 ### Fit the posterior-----------------------------------------------------------
 if (!SIMULATE) {
@@ -84,3 +94,5 @@ if (PLOT_TS) {
   else
     gg
 }
+
+ggsave("sir_fit_1.png")
