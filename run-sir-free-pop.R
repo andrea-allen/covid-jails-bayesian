@@ -13,7 +13,7 @@ SIMULATE = FALSE
 
 ### Load required packages------------------------------------------------------
 library(cmdstanr)
-library(readr)
+library(tidyverse)
 library(posterior)
 
 ### Fit the posterior-----------------------------------------------------------
