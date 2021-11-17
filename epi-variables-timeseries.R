@@ -23,8 +23,9 @@ VARS <- c(
 SAVE_CSV <- FALSE
 
 ### Load required packages------------------------------------------------------
-require(tidyverse)
-require(behindbarstools)
+library(tidyverse)
+library(behindbarstools)
+library(ggforestplot)
 
 ### Helper functions-----------------------------------------------------------------
 total_vacc <- function(first_shot, second_shot) {

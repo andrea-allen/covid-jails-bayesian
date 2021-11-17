@@ -18,8 +18,8 @@ VARS <- c(
 )
 
 ### Load required packages------------------------------------------------------
-require(tidyverse)
-require(behindbarstools)
+library(tidyverse)
+library(behindbarstools)
 
 ### Load and filter data--------------------------------------------------------
 if (is.null(DATA_SOURCE)) {

@@ -12,9 +12,9 @@ PLOT_TS = TRUE
 SIMULATE = FALSE
 
 ### Load required packages------------------------------------------------------
-require(cmdstanr)
-require(readr)
-require(posterior)
+library(cmdstanr)
+library(readr)
+library(posterior)
 
 ### Fit the posterior-----------------------------------------------------------
 if (!SIMULATE) {

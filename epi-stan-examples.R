@@ -1,6 +1,6 @@
-require(cmdstanr)
-require(tidyverse)
-require(posterior)
+library(cmdstanr)
+library(tidyverse)
+library(posterior)
 
 # info for stan 'data' block
 stan_dat <- list(
