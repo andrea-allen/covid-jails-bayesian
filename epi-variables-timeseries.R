@@ -12,19 +12,23 @@
 ### SAVE_CSV: save output? (will also drop NAs)---------------------------------
 ### ADD_COMMUNITY: "left_joins" in JHU cases by keys Date x (State|County)------
 
-DATA_SOURCE <- 'cached_data/ucla-all-11-16'
+#install.packages("devtools", repos=c("http://ftp.ussg.iu.edu/CRAN/"))
+#devtools::install_github("uclalawcovid19behindbars/behindbarstools")
+
+#DATA_SOURCE <- 'cached_data/ucla-all-11-16'
+DATA_SOURCE <- 'cached_data/UCLA_11-02-21'
 STATE_REGEX <- '\\w+'
 STATE_EXCLUDE <- 'Hawa|North|Not Ava|Utah|Virg' # exclude states not in report
 COUNTY_REGEX <- '\\w+'
-FEDERAL <- FALSE
+FEDERAL <- TRUE
 FACILITY_IDS <- 1:10000 # i.e. don't filter by facility
-AGG_BY_STATE <- FALSE
+AGG_BY_STATE <- TRUE
 VARS <- c(
   'Residents.Active', 'Residents.Completed', 'Residents.Initiated', 'Residents.Population',
-  'Staff.Active', 'Staff.Completed', 'Staff.Initiated', 'Staff.Population'
-)
-SAVE_CSV <- FALSE
-ADD_COMMUNITY <- FALSE
+  'Staff.Active', 'Staff.Completed', 'Staff.Initiated'
+) # add   'Staff.Population' if desired
+SAVE_CSV <- TRUE
+ADD_COMMUNITY <- TRUE
 
 ### Load required packages------------------------------------------------------
 library(tidyverse)
@@ -75,7 +79,8 @@ dat_sub <- filter(
 
 if (AGG_BY_STATE) {
   # borrow staff population from Marshall project
-  staff_marshall <- read_csv('cached_data/staff-populations-marshall.csv') |> 
+  staff_marshall <- read_csv('https://raw.githubusercontent.com/themarshallproject/COVID_prison_data/master/data/staff_populations.csv') |>
+  #staff_marshall <- read_csv('cached_data/staff-populations-marshall.csv') |>
     mutate(as_of_date = as.Date(as_of_date, '%m/%d/%y'))
   
   dat_sub <- dat_sub |>
@@ -132,7 +137,7 @@ if (ADD_COMMUNITY) {
 if (SAVE_CSV) {
   timeseries |> 
     drop_na(c(any_of(VARS) & !matches('Compl|Initi'), contains('Vacc'), 'Community.Active')) |> 
-    write_csv(paste0('epi-timeseries-', Sys.Date(), '.csv'))
+    write_csv(paste0('epi-timeseries-fed-agg-', Sys.Date(), '.csv'))
 }
   
   

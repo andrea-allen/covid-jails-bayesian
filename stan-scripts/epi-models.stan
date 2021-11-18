@@ -105,5 +105,37 @@ functions {
     
     return dydt;
   }
+
+    /**
+  * @function sir_cwr_state ODEs for the classic SIR model with changing population size for residents, constant for workers
+  * and community, and mechanism for community to prison transmission TBD, aggregated over a whole state
+  * FUNCTION IS A WORK IN PROGRESS
+  *
+  * @param t Independent variable time
+  * @param y Vector for I and R states, and population size
+  * @param beta Infection rate
+  * @param alpha Recovery rate
+  * @param arrest_rate Rate of change in prison population
+  * @param state_pop
+  * @param worker_pop
+  *
+  * @return Vector of system derivatives
+  */
+  vector sir_cwr_state(real t, vector y, real beta, real alpha, real arrest_rate, real worker_pop, real state_pop) {
+    vector[7] dydt;
+    dydt[1] = beta*y[1]*(y[3]-y[1]-y[2])/y[3] + beta*y[4]*(y[3]-y[1]-y[2])/y[3] - alpha*y[1];
+    dydt[2] = alpha * y[1]; // recovered update
+    dydt[3] = arrest_rate; // population update
+
+    dydt[4] = beta*y[4]*(worker_pop-y[4]-y[5])/worker_pop
+    + beta*y[1]*(worker_pop-y[4]-y[5])/worker_pop
+    + beta*y[6]*(worker_pop-y[4]-y[5])/worker_pop
+     - alpha*y[4];
+    dydt[5] = alpha * y[4]; // recovered worker update
+
+    dydt[6] = beta*y[6]*(state_pop-y[6]-y[7])/state_pop - alpha * y[6];
+    dydt[7] = alpha * y[6];
+    return dydt;
+  }
   
 }

@@ -6,7 +6,7 @@
 ### PLOT_TS: display a plot of the predictive distribution?---------------------
 ### SIMULATE: simulate fake data (prior predictive check)?----------------------
 
-FNAME = 'kern_141.0'
+FNAME = 'epi-timeseries-fed-agg-CA-partial'
 SAVE_CSV = TRUE
 PLOT_TS = TRUE
 SIMULATE = FALSE
@@ -95,4 +95,4 @@ if (PLOT_TS) {
     gg
 }
 
-ggsave("sir_fit_1.png")
+ggsave("sir_fit_fed_agg_CA.png")
