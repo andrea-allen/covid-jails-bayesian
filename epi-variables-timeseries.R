@@ -16,7 +16,7 @@
 #devtools::install_github("uclalawcovid19behindbars/behindbarstools")
 
 #DATA_SOURCE <- 'cached_data/ucla-all-11-16'
-DATA_SOURCE <- 'cached_data/UCLA_11-02-21'
+DATA_SOURCE <- 'cached_data/UCLA_11-11-21'
 STATE_REGEX <- '\\w+'
 STATE_EXCLUDE <- 'Hawa|North|Not Ava|Utah|Virg' # exclude states not in report
 COUNTY_REGEX <- '\\w+'
@@ -25,10 +25,10 @@ FACILITY_IDS <- 1:10000 # i.e. don't filter by facility
 AGG_BY_STATE <- TRUE
 VARS <- c(
   'Residents.Active', 'Residents.Completed', 'Residents.Initiated', 'Residents.Population',
-  'Staff.Active', 'Staff.Completed', 'Staff.Initiated'
+  'Staff.Active', 'Staff.Completed', 'Staff.Initiated', 'Staff.Population'
 ) # add   'Staff.Population' if desired
-SAVE_CSV <- TRUE
-ADD_COMMUNITY <- TRUE
+SAVE_CSV <- FALSE
+ADD_COMMUNITY <- FALSE
 
 ### Load required packages------------------------------------------------------
 library(tidyverse)
