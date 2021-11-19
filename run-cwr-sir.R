@@ -6,7 +6,7 @@ library(posterior)
 FNAME = 'epi-timeseries-fed-agg-CA-partial'
 SAVE_CSV = TRUE
 PLOT_TS = TRUE
-SIMULATE = TRUE
+SIMULATE = FALSE
 
 dat_org <- read_csv('joined_datasets_california2/epi-timeseries-fed-agg-CA-partial.csv')
 
@@ -91,10 +91,9 @@ if (PLOT_TS) {
     geom_smooth(method = 'gam', se = FALSE) +
     guides(col = guide_legend(override.aes = list(alpha = 1)))
 
-  if (!SIMULATE)
-    gg + geom_point(data = tibble(time = stan_dat$ts, inf = stan_dat$yr))
-  else
-    gg
+  gg
+  # + geom_point(data = tibble(time = stan_dat$ts, inf = stan_dat$yr))
+
   ggsave("prior-p-sir-cwr-ca-fed-agg-res.png")
 }
 

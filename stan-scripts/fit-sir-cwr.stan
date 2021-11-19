@@ -49,8 +49,9 @@ transformed parameters {
 model {
     /* priors */
     beta ~ lognormal(log(0.3), 0.3);
-    rec_init_res ~ normal(0, 100) T[0, pop_init_res];
-    rec_init_worker ~ normal(0, 100) T[0, worker_pop];
+    rec_init_res ~ normal(pop_init_res * 1 / 3, 1000) T[0, pop_init_res];
+    rec_init_worker ~ normal(worker_pop * 2 / 3, 1000) T[0, worker_pop];
+    rec_init_state ~ normal(state_pop, 1000) T[0, state_pop];
     arr_rate ~ normal(0, 1);
     
     /* likelihood */
