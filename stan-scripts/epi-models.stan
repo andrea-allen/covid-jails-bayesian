@@ -141,13 +141,13 @@ functions {
   */
   vector sir_cwr_state(real t, vector y, real beta, real alpha, real arrest_rate, real worker_pop, real state_pop) {
     vector[7] dydt;
-    dydt[1] = beta*y[1]*(y[3]-y[1]-y[2])/y[3] + beta*y[4]*(y[3]-y[1]-y[2])/y[3] - alpha*y[1];
+    dydt[1] = beta*y[1]*(y[3]-y[1]-y[2])/(y[3]+worker_pop) + beta*y[4]*(y[3]-y[1]-y[2])/(y[3]+worker_pop) - alpha*y[1];
     dydt[2] = alpha * y[1]; // recovered update
     dydt[3] = arrest_rate; // population update
 
-    dydt[4] = beta*y[4]*(worker_pop-y[4]-y[5])/worker_pop
-    + beta*y[1]*(worker_pop-y[4]-y[5])/worker_pop
-    + beta*y[6]*(worker_pop-y[4]-y[5])/worker_pop
+    dydt[4] = beta*y[4]*(worker_pop-y[4]-y[5])/(worker_pop+y[3])
+    + beta*y[1]*(worker_pop-y[4]-y[5])/(worker_pop+y[3])
+    + beta*y[6]*(worker_pop-y[4]-y[5])/(worker_pop+state_pop)
      - alpha*y[4];
     dydt[5] = alpha * y[4]; // recovered worker update
 
