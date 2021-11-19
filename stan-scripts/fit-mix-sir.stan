@@ -59,12 +59,10 @@ model {
     beta ~ lognormal(log(0.3), 0.3);
     rec_init1 ~ normal(0, 100) T[0, N];
     rec_init2 ~ normal(0, 100) T[0, N];
-    // arr_rate ~ normal(0, 1);
+    target += normal_lpdf(lam1 + lam2 | 1.0, 0.001);
     
     /* likelihood */
-    // N ~ normal(pop_size, 30);
     y ~ poisson(inf_mix);
-    target += normal_lpdf(lam1 + lam2 | 1.0, 0.001);
 }
 
 generated quantities {

@@ -13,37 +13,35 @@ data {
 }
 
 transformed data {
-  real inf_init; // initial conditions for I compartment
+  real inf_init_res; // initial conditions for I compartment
   real inf_init_worker; // coniditions for I worker compartment
   real inf_init_state;
-  real pop_init;
-  real pop_worker_init;
-  inf_init = fmax(1.0, yr[1]);
+  real pop_init_res;
+  inf_init_res = fmax(1.0, yr[1]);
   inf_init_worker = fmax(1.0, yw[1]);
   inf_init_state = fmax(1.0, yc[1]);
-  pop_init = N[1];
-  pop_worker_init = worker_pop;
+  pop_init_res = N[1];
 }
 
 parameters {
     real<lower=0> beta;
-    real<lower=0, upper=pop_init> rec_init;
+    real<lower=0, upper=pop_init_res> rec_init_res;
+    real<lower=0, upper=worker_pop> rec_init_worker;
+    real<lower=0, upper=state_pop> rec_init_state;
     real arr_rate;
-    real pop_state;
-    real pop_worker;
 }
 
 transformed parameters {
     vector[7] epi_curve[max_t]; // output from ODE system
     {
     vector[7] init;
-    init[1] = inf_init;
-    init[2] = rec_init;
-    init[3] = pop_init;
+    init[1] = inf_init_res;
+    init[2] = rec_init_res;
+    init[3] = pop_init_res;
     init[4] = inf_init_worker;
-    init[5] = 3; // init worker recovered, in future pass this in
+    init[5] = rec_init_worker;
     init[6] = inf_init_state;
-    init[7] = 100;
+    init[7] = rec_init_state;
     epi_curve = ode_rk45(sir_cwr_state, init, 0.9, ts, beta, alpha, arr_rate, worker_pop, state_pop);
   }
 }
@@ -51,7 +49,8 @@ transformed parameters {
 model {
     /* priors */
     beta ~ lognormal(log(0.3), 0.3);
-    rec_init ~ normal(0, 100) T[0, pop_init];
+    rec_init_res ~ normal(0, 100) T[0, pop_init_res];
+    rec_init_worker ~ normal(0, 100) T[0, worker_pop];
     arr_rate ~ normal(0, 1);
     
     /* likelihood */
