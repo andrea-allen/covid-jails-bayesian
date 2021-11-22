@@ -139,20 +139,25 @@ functions {
   *
   * @return Vector of system derivatives
   */
-  vector sir_cwr_state(real t, vector y, real beta, real alpha, real arrest_rate, real worker_pop, real state_pop) {
-    vector[7] dydt;
-    dydt[1] = beta*y[1]*(y[3]-y[1]-y[2])/(y[3]+worker_pop) + beta*y[4]*(y[3]-y[1]-y[2])/(y[3]+worker_pop) - alpha*y[1];
+  vector sir_cwr_state2(real t, vector y, real beta, real alpha, real resident_pop, real worker_pop, real state_pop) {
+    vector[6] dydt;
+    real s_res = resident_pop - y[1] - y[2];
+    real s_work = worker_pop - y[3] - y[4]; 
+    real s_state = state_pop - y[5] - y[6];
+    real fac_pool = resident_pop + worker_pop; 
+    real comm_pool = worker_pop + state_pop;
+    
+    
+    dydt[1] = beta * s_res * (y[1]+y[3]) / fac_pool - alpha * y[1];
     dydt[2] = alpha * y[1]; // recovered update
-    dydt[3] = arrest_rate; // population update
 
-    dydt[4] = beta*y[4]*(worker_pop-y[4]-y[5])/(worker_pop+y[3])
-    + beta*y[1]*(worker_pop-y[4]-y[5])/(worker_pop+y[3])
-    + beta*y[6]*(worker_pop-y[4]-y[5])/(worker_pop+state_pop)
-     - alpha*y[4];
-    dydt[5] = alpha * y[4]; // recovered worker update
+    dydt[4] = beta * s_work * (y[1]+y[3]) / fac_pool 
+      + beta * s_work * (y[3]+y[5]) / comm_pool 
+      - alpha*y[3];
+    dydt[5] = alpha * y[3]; // recovered worker update
 
-    dydt[6] = beta*y[6]*(state_pop-y[6]-y[7])/state_pop - alpha * y[6];
-    dydt[7] = alpha * y[6];
+    dydt[6] = beta * s_state * (y[3]+y[5]) / comm_pool  - alpha * y[5];
+    dydt[7] = alpha * y[5];
     return dydt;
   }
   

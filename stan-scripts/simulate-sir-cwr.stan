@@ -26,10 +26,10 @@ generated quantities {
 
   /* sample priors */
   beta = lognormal_rng(log(0.3), 0.3);
-  rec_init_res = 6000;
-  rec_init_worker = 40000;
+  rec_init_res = uniform_rng(pop_init * 0.9, pop_init);
+  rec_init_worker = uniform_rng(worker_pop * 0.9, worker_pop);
   // rec_init_res = uniform_rng(10, .5*pop_init);
-  rec_init_state = uniform_rng(10, .5*state_pop);
+  rec_init_state = uniform_rng(0.995 * state_pop, state_pop);
   // rec_init_worker = uniform_rng(10, .5*worker_pop);
   arr_rate = normal_rng(0, 1);
   

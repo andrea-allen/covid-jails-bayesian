@@ -6,15 +6,9 @@ library(posterior)
 FNAME = 'epi-timeseries-fed-agg-CA-partial'
 SAVE_CSV = TRUE
 PLOT_TS = TRUE
-SIMULATE = FALSE
+SIMULATE = TRUE
 
 dat_org <- read_csv('joined_datasets_california2/epi-timeseries-fed-agg-CA-partial.csv')
-
-#dat_org |>
-#  pivot_longer(c(Residents.Active, Staff.Active, Community.Active, Staff.Population)) |>
-#  ggplot(aes(Date, value)) +
-#  geom_point() +
-#  facet_wrap(~name, scales = 'free_y')
 
 
 if (!SIMULATE) {
@@ -45,7 +39,8 @@ if (!SIMULATE) {
   if (SAVE_CSV) {
     write_csv(post, paste0('stan-fits/fit-sir-cwr-', FNAME, '-', Sys.Date(), '.csv'))
   }
-} else {
+} else { 
+  # SIMULATE
   stan_dat <- list(
     max_t = nrow(dat_org),
     ts = 1:nrow(dat_org),
@@ -70,8 +65,8 @@ if (!SIMULATE) {
     iter_sampling = 1000,
     fixed_param = TRUE
   )
-  print('finished fit')
-    post <- as_draws_df(fit$draws())
+  
+  post <- as_draws_df(fit$draws())
 
   if (SAVE_CSV) {
     date <- str_replace(Sys.time(), ':', '-')
@@ -80,65 +75,27 @@ if (!SIMULATE) {
 }
 
 if (PLOT_TS) {
-  inf_ts <- fit$draws() |>
-    thin_draws(thin = 100) |>
+  draws_ts <- fit$draws() |>
     as_draws_df() |>
-    pivot_longer(matches('yhat'), names_to = 'time', values_to = 'inf') |>
-    mutate(time = as.double(str_extract(time, '\\d+')))
+    slice_sample(n = 200) |>
+    pivot_longer(matches('y\\w*hat'), values_to = 'inf') |> 
+    select(name, inf, contains('.')) |> 
+    extract(name, c('Group', 'Time'), '(\\w+)\\[(\\d+)', remove = TRUE) |> 
+    mutate(
+      Group = as.character(fct_recode(
+        Group, Community.Active = 'ychat', 
+        Residents.Active = 'yhat', Staff.Active = 'ywhat'
+      ))
+    )
+  
+  obs_ts <- dat_org |>
+    mutate(Time = seq_along(Date)) |> 
+    pivot_longer(contains('Active'), names_to = 'Group', values_to = 'inf')
 
-  gg <- ggplot(inf_ts, aes(time, inf)) +
+  ggplot(draws_ts, aes(as.double(Time), inf)) +
     geom_point(aes(col = as.factor(.chain)), alpha = 0.4, shape = 1) +
-    geom_smooth(method = 'gam', se = FALSE) +
+    geom_smooth(method = 'gam', se = FALSE, col = 'gray70', linetype = 'dashed') +
+    geom_point(data = obs_ts) +
+    facet_wrap(~Group, nrow = 1, scales = 'free')
     guides(col = guide_legend(override.aes = list(alpha = 1)))
-
-  gg
-  # + geom_point(data = tibble(time = stan_dat$ts, inf = stan_dat$yr))
-
-  ggsave("prior-p-sir-cwr-ca-fed-agg-res.png")
 }
-
-if (PLOT_TS) {
-  inf_ts <- fit$draws() |>
-    thin_draws(thin = 100) |>
-    as_draws_df() |>
-    pivot_longer(matches('ywhat'), names_to = 'time', values_to = 'inf') |>
-    mutate(time = as.double(str_extract(time, '\\d+')))
-
-  gg <- ggplot(inf_ts, aes(time, inf)) +
-    geom_point(aes(col = as.factor(.chain)), alpha = 0.4, shape = 1) +
-    geom_smooth(method = 'gam', se = FALSE) +
-    guides(col = guide_legend(override.aes = list(alpha = 1)))
-
-  if (!SIMULATE)
-    gg + geom_point(data = tibble(time = stan_dat$ts, inf = stan_dat$yw))
-  else
-    gg
-  ggsave("prior-p-sir-cwr-ca-fed-agg-worker.png")
-}
-
-if (PLOT_TS) {
-  inf_ts <- fit$draws() |>
-    thin_draws(thin = 100) |>
-    as_draws_df() |>
-    pivot_longer(matches('ychat'), names_to = 'time', values_to = 'inf') |>
-    mutate(time = as.double(str_extract(time, '\\d+')))
-
-  gg <- ggplot(inf_ts, aes(time, inf)) +
-    geom_point(aes(col = as.factor(.chain)), alpha = 0.4, shape = 1) +
-    geom_smooth(method = 'gam', se = FALSE) +
-    guides(col = guide_legend(override.aes = list(alpha = 1)))
-
-  if (!SIMULATE)
-    gg + geom_point(data = tibble(time = stan_dat$ts, inf = stan_dat$yc))
-  else
-    gg
-  ggsave("prior-p-sir-cwr-ca-fed-agg-state.png")
-}
-
-
-
-
-## aggregate federal by state
-## pick one state
-## make a CWR model
-## fit single state model >> staff pop,
