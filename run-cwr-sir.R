@@ -21,6 +21,7 @@ if (!SIMULATE) {
     N = dat_org$Residents.Population,
     worker_pop = dat_org$Staff.Population[1],
     state_pop = 39000000,
+    res_pop =dat_org$Residents.Population[1],
     alpha = 1/14
   )
 
@@ -38,7 +39,8 @@ if (!SIMULATE) {
   post <- as_draws_df(fit$draws())
 
   if (SAVE_CSV) {
-    write_csv(post, paste0('stan-fits/fit-sir-cwr-', FNAME, '-', Sys.Date(), '.csv'))
+    date <- str_replace(Sys.time(), ':', '-')
+    write_csv(post, paste0('stan-fits/fit-sir-cwr-', date, '.csv'))
   }
 } else {
   # SIMULATE

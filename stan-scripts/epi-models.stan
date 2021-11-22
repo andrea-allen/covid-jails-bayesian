@@ -146,7 +146,7 @@ functions {
   *
   * @return Vector of system derivatives
   */
-  vector sir_cwr_state2(real t, vector y, real beta, real alpha, real resident_pop, real worker_pop, real state_pop) {
+  vector sir_cwr_state2(real t, vector y, real beta, real alpha, real resident_pop, real worker_pop, real state_pop, real c) {
     vector[6] dydt;
     real s_res = resident_pop - y[1] - y[2];
     real s_work = worker_pop - y[3] - y[4];
@@ -159,7 +159,7 @@ functions {
     dydt[2] = alpha * y[1]; // recovered update
 
     dydt[3] = beta * s_work * (y[1]+y[3]) / fac_pool
-      + beta * s_work * (y[3]+y[5]) / comm_pool
+      + c * beta * s_work * (y[3]+y[5]) / comm_pool
       - alpha*y[3];
     dydt[4] = alpha * y[3]; // recovered worker update
 

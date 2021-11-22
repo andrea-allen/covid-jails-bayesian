@@ -6,7 +6,7 @@ data {
     int yr[max_t]; // resident cases for each day
     int yw[max_t]; // worker cases for each day
     int yc[max_t]; // community cases
-    real N[max_t]; // population size for each day
+    real res_pop; // population size for each day
     real worker_pop; // constant worker pop
     real state_pop; //constant state pop
     real alpha;
@@ -20,7 +20,7 @@ transformed data {
   inf_init_res = fmax(1.0, yr[1]);
   inf_init_worker = fmax(1.0, yw[1]);
   inf_init_state = fmax(1.0, yc[1]);
-  pop_init_res = N[1];
+  pop_init_res = res_pop;
 }
 
 parameters {
@@ -28,37 +28,35 @@ parameters {
     real<lower=0, upper=pop_init_res> rec_init_res;
     real<lower=0, upper=worker_pop> rec_init_worker;
     real<lower=0, upper=state_pop> rec_init_state;
-    real arr_rate;
+    real<lower=0> c;
 }
 
 transformed parameters {
-    vector[7] epi_curve[max_t]; // output from ODE system
+    vector[6] epi_curve[max_t]; // output from ODE system
     {
-    vector[7] init;
+    vector[6] init;
     init[1] = inf_init_res;
     init[2] = rec_init_res;
-    init[3] = pop_init_res;
-    init[4] = inf_init_worker;
-    init[5] = rec_init_worker;
-    init[6] = inf_init_state;
-    init[7] = rec_init_state;
-    epi_curve = ode_rk45(sir_cwr_state2, init, 0.9, ts, beta, alpha, arr_rate, worker_pop, state_pop);
+    init[3] = inf_init_worker;
+    init[4] = rec_init_worker;
+    init[5] = inf_init_state;
+    init[6] = rec_init_state;
+    epi_curve = ode_rk45(sir_cwr_state2, init, 0.9, ts, beta, alpha, pop_init_res, worker_pop, state_pop, c);
   }
 }
 
 model {
     /* priors */
     beta ~ lognormal(log(0.3), 0.3);
-    rec_init_res ~ normal(pop_init_res * 1 / 3, 1000) T[0, pop_init_res];
-    rec_init_worker ~ normal(worker_pop * 2 / 3, 1000) T[0, worker_pop];
+    rec_init_res ~ normal(res_pop * .9, 500) T[0, res_pop];
+    rec_init_worker ~ normal(worker_pop * .9, 500) T[0, worker_pop];
     rec_init_state ~ normal(state_pop, 1000) T[0, state_pop];
-    arr_rate ~ normal(0, 1);
+    c ~ beta(2, 4);
     
     /* likelihood */
-    N ~ normal(epi_curve[:, 3], 30);
     yr ~ poisson(epi_curve[:, 1]);
-    yw ~ poisson(epi_curve[:, 4]);
-    yc ~ poisson(epi_curve[:,6]);
+    yw ~ poisson(epi_curve[:, 3]);
+    yc ~ poisson(epi_curve[:, 5]);
 }
 
 generated quantities {
@@ -66,6 +64,6 @@ generated quantities {
     int ywhat[max_t];
     int ychat[max_t];
     yhat = poisson_rng(epi_curve[:, 1]);
-    ywhat = poisson_rng(epi_curve[:,4]);
-    ychat = poisson_rng(epi_curve[:,6]);
+    ywhat = poisson_rng(epi_curve[:,3]);
+    ychat = poisson_rng(epi_curve[:,5]);
 }
