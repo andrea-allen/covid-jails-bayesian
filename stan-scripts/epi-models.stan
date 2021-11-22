@@ -1,5 +1,12 @@
 functions {
-  
+    real normal_lub_rng(real mu, real sigma, real lb, real ub) {
+      real p_lb = normal_cdf(lb, mu, sigma);
+      real p_ub = normal_cdf(ub, mu, sigma);
+      real u = uniform_rng(p_lb, p_ub);
+      real y = mu + sigma * inv_Phi(u);
+      return y;
+    }
+
   /**
   * @function sir ODEs for the classic SIR model with normalized compartments
   *
@@ -142,22 +149,22 @@ functions {
   vector sir_cwr_state2(real t, vector y, real beta, real alpha, real resident_pop, real worker_pop, real state_pop) {
     vector[6] dydt;
     real s_res = resident_pop - y[1] - y[2];
-    real s_work = worker_pop - y[3] - y[4]; 
+    real s_work = worker_pop - y[3] - y[4];
     real s_state = state_pop - y[5] - y[6];
-    real fac_pool = resident_pop + worker_pop; 
+    real fac_pool = resident_pop + worker_pop;
     real comm_pool = worker_pop + state_pop;
-    
-    
+
+
     dydt[1] = beta * s_res * (y[1]+y[3]) / fac_pool - alpha * y[1];
     dydt[2] = alpha * y[1]; // recovered update
 
-    dydt[4] = beta * s_work * (y[1]+y[3]) / fac_pool 
-      + beta * s_work * (y[3]+y[5]) / comm_pool 
+    dydt[3] = beta * s_work * (y[1]+y[3]) / fac_pool
+      + beta * s_work * (y[3]+y[5]) / comm_pool
       - alpha*y[3];
-    dydt[5] = alpha * y[3]; // recovered worker update
+    dydt[4] = alpha * y[3]; // recovered worker update
 
-    dydt[6] = beta * s_state * (y[3]+y[5]) / comm_pool  - alpha * y[5];
-    dydt[7] = alpha * y[5];
+    dydt[5] = beta * s_state * (y[3]+y[5]) / comm_pool  - alpha * y[5];
+    dydt[6] = alpha * y[5];
     return dydt;
   }
   

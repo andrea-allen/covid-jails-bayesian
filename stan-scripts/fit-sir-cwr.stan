@@ -42,7 +42,7 @@ transformed parameters {
     init[5] = rec_init_worker;
     init[6] = inf_init_state;
     init[7] = rec_init_state;
-    epi_curve = ode_rk45(sir_cwr_state, init, 0.9, ts, beta, alpha, arr_rate, worker_pop, state_pop);
+    epi_curve = ode_rk45(sir_cwr_state2, init, 0.9, ts, beta, alpha, arr_rate, worker_pop, state_pop);
   }
 }
 
